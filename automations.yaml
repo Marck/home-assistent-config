@@ -1,0 +1,73 @@
+- id: '1613222806444'
+  alias: Notify on low battery level
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.[DEVICENAME]_battery_level
+    to: '30'
+  condition: []
+  action:
+  - service: notify.mobile_app_[DEVICENAME]
+    data:
+      message: "Battery level on [DEVICENAME] is 30% or lower. \nConsider charging.\n"
+  mode: single
+- id: '1616786807550'
+  alias: Notify on HASS update
+  description: ''
+  use_blueprint:
+    path: hass-update-notification.yaml
+    input:
+      notification_message: Home Assistant {{ newest_version }} is available
+      delay: 0
+      updater: binary_sensor.updater
+      notification_title: Upgrade time!
+      notify_device: [DEVICE-ID]
+- id: '1616868701933'
+  alias: Living room lights ON
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: -01:00:00
+  condition:
+  - condition: or
+    conditions:
+    - condition: zone
+      entity_id: person.[PERSON]
+      zone: zone.home
+    - condition: zone
+      entity_id: person.[PERSON]
+      zone: zone.home
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.[SWITCH-NAME]
+  - device_id: [DEVICE-ID]
+    domain: mobile_app
+    type: notify
+    title: HASS Automation
+    message: 'Just ran automation: Living room lights ON'
+  - device_id: [DEVICE-ID]
+    domain: mobile_app
+    type: notify
+    message: 'Just ran automation: Living room lights ON'
+    title: HASS Automation
+  mode: restart
+- id: '1616869447291'
+  alias: Living room lights OFF
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunrise
+    offset: -00:30:00
+  - platform: time
+    at: 03:00
+  condition:
+  - condition: state
+    entity_id: switch.[SWITCH-NAME]
+    state: 'on'
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.[SWITCH-NAME]
+  mode: restart

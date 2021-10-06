@@ -1,0 +1,16 @@
+#default_config:
+person:
+updater:
+zone:
+zeroconf:
+system_health:
+sun:
+ssdp:
+map:
+logbook:
+config:
+history:
+mobile_app:
+automation: !include automations.yaml
+logger:
+  default: info
